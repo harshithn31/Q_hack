@@ -20,8 +20,8 @@ export default function MainPage() {
 	const [profileData, setProfileData] = useState({
 		name: "Jane Doe",
 		avatarUrl: "https://bit.ly/broken-link",
-		summary: "A passionate developer exploring tech and career growth.",
-		skills: ["C++", "React", "Machine Learning", "Life Planning"],
+		summary: "No summay is aviable",
+		skills: [],
 	});
 
   const handleUpload = async (file) => {
