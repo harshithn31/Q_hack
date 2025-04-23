@@ -8,7 +8,7 @@ from graph.dag import run_full_pipeline
 from llm_agents.quiz_agent import get_quiz, validate_quiz_answers, QuizQuestion
 from embeddings.utils import extract_resume_text
 from typing import List, Dict
-import embeddings.utils
+from resume_parser_main import process_resume
 
 router = APIRouter()
 
