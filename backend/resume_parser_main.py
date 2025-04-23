@@ -1,6 +1,6 @@
 import os
 import asyncio
-import uuid
+#import uuid
 import json
 from dotenv import load_dotenv
 from embeddings.utils import extract_resume_text, extract_images_from_pdf
@@ -13,7 +13,6 @@ load_dotenv()
 # ----------- Resume Processing Pipeline -----------
 def process_resume(file: BinaryIO, filename: str):
     try:
-        resume_id = str(uuid.uuid4())
         resume_text = extract_resume_text(file, filename)
         print("\n✅ Resume text extracted.")
 
@@ -31,7 +30,6 @@ def process_resume(file: BinaryIO, filename: str):
 
         # Build JSON response
         output = {
-            "uuid": resume_id,
             "name": name,
             "avatarUri": avatar_uri,
             "summary": result.summary,
