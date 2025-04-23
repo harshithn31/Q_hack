@@ -9,4 +9,4 @@ import os
 load_dotenv()
 
 app = FastAPI(title="Personalized Learning Marketplace API")
-app.include_router(router)
+app.include_router(router, prefix="/api")
