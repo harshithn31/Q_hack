@@ -81,7 +81,12 @@ export default function MainPage() {
         mb={{ base: 0, lg: 0 }}
         px={{ base: 0, sm: 2 }}
       >
-        <ProfileCard name="Jane Doe" avatarUrl="https://bit.ly/broken-link"/>
+        <ProfileCard 
+					name="Jane Doe"
+					avatarUrl="https://bit.ly/broken-link"
+					summary = "A passionate developer exploring tech and career growth."
+					skills = {["Python", "React", "Machine Learning", "Life Planning"]}
+					/>
         {/* <Box mt={6}><XPBadge xp={xp} badges={badges} /></Box> */}
       </Box>
       <Box
