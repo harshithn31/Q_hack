@@ -4,9 +4,9 @@ ResumeAgent: Extracts structured information from a user's resume text.
 - Output: skills (List[str]), summary (str), experience_highlights (List[str]), learning_preferences (optional, str)
 
 Example input:
-resume_text = """
+resume_text = '''
 Jane Doe\nSenior Data Analyst\nSkills: Python, SQL, Data Visualization\nExperience: Built dashboards, led analytics projects, mentored juniors. Prefers project-based learning.
-"""
+'''
 
 Example output:
 {

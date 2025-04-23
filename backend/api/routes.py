@@ -15,24 +15,43 @@ router = APIRouter()
 USER_XP = {}
 USER_BADGES = {}
 
+import uuid
+
+RESUME_STORE = {}
+
 @router.post("/upload-resume")
 async def upload_resume(file: UploadFile = File(...)):
+    print(f"[UPLOAD] Received upload request: filename={file.filename}, content_type={file.content_type}")
     """
-    Accepts a PDF or TXT resume, extracts text securely, and returns it.
+    Accepts a PDF or TXT resume, extracts text securely, and returns a resume_id for later use.
     """
     try:
         text = extract_resume_text(await file.read(), file.filename)
         if not text.strip():
+            print(f"[UPLOAD] Extraction failed: No extractable text found in {file.filename}")
             raise HTTPException(status_code=400, detail="No extractable text found in resume.")
-        return {"text": text}
+        resume_id = str(uuid.uuid4())
+        RESUME_STORE[resume_id] = text
+        print(f"[UPLOAD] Successfully stored resume_id={resume_id} for {file.filename}")
+        return {"resume_id": resume_id}
     except ValueError as e:
+        print(f"[UPLOAD] ValueError: {e}")
         raise HTTPException(status_code=400, detail=str(e))
-    except Exception:
+    except Exception as e:
+        print(f"[UPLOAD] Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Resume extraction failed due to a server error.")
 
 class PipelineRequest(BaseModel):
-    resume_text: str
+    resume_id: str
     chat_transcript: str
+
+@router.get("/get-resume-text/{resume_id}")
+async def get_resume_text(resume_id: str):
+    text = RESUME_STORE.get(resume_id)
+    if not text:
+        raise HTTPException(status_code=404, detail="Resume not found")
+    return {"text": text}
+
 
 class QuizRequest(BaseModel):
     user_id: str
@@ -50,7 +69,10 @@ async def recommend_bundle(request: PipelineRequest):
     Runs the full pipeline and returns a module-level personalized learning bundle.
     Response includes summary, skills, skill gap, and recommended_modules (with course/module/subtopics/rationale).
     """
-    state = await run_full_pipeline(request.resume_text, request.chat_transcript)
+    resume_text = RESUME_STORE.get(request.resume_id)
+    if not resume_text:
+        raise HTTPException(status_code=400, detail="Invalid or expired resume_id.")
+    state = await run_full_pipeline(resume_text, request.chat_transcript)
     return {
         "summary": state.summary,
         "skills": state.skills,

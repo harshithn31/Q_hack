@@ -5,8 +5,8 @@ CourseRetriever: FAISS-backed semantic course retrieval using LangChain embeddin
 - Retrieves top-N courses relevant to skills_gap.
 """
 from typing import List, Dict
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_community.embeddings import OpenAIEmbeddings
+from langchain_community.vectorstores import FAISS
 from langchain.docstore.document import Document
 import os
 

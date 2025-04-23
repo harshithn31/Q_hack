@@ -18,8 +18,8 @@ export default function Dashboard({ onGoHome }) {
 
   return (
     <Box
-      w="100%"
-      maxW={{ base: "100%", sm: "480px", md: "700px" }}
+      maxWidth="95vw"
+      minHeight="80vh"
       mx="auto"
       mt={{ base: 2, md: 10 }}
       p={{ base: 2, sm: 4, md: 8 }}
