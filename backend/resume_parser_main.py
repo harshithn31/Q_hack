@@ -11,7 +11,7 @@ from typing import BinaryIO
 load_dotenv()
 
 # ----------- Resume Processing Pipeline -----------
-def process_resume(file: BinaryIO, filename: str):
+async def process_resume(file: BinaryIO, filename: str):
     try:
         resume_text = extract_resume_text(file, filename)
         print("\n✅ Resume text extracted.")
@@ -23,12 +23,10 @@ def process_resume(file: BinaryIO, filename: str):
             avatar_uri = image_paths[0] if image_paths else None
 
         print("\n🤖 Extracting structured data with ResumeAgent...")
-        result = asyncio.run(extract_with_agent(resume_text))
+        result = await extract_with_agent(resume_text)  # 👈 Corrected here
 
-        # Try to extract a name (very basic method: take the first non-empty line)
         name = next((line.strip() for line in resume_text.splitlines() if line.strip()), "Unknown")
 
-        # Build JSON response
         output = {
             "name": name,
             "avatarUri": avatar_uri,
@@ -37,7 +35,7 @@ def process_resume(file: BinaryIO, filename: str):
         }
 
         print("\n📦 JSON Output:")
-        print(json.dumps(output, indent=2))
+        print(output)
         return output
 
     except Exception as e:

@@ -27,7 +27,7 @@ async def upload_resume(file: UploadFile = File(...)):
         file_bytes = await file.read()
 
         # Run the AI pipeline
-        result = process_resume(file_bytes, file.filename)
+        result = await process_resume(file_bytes, file.filename)
         if result is None:
             raise HTTPException(status_code=400, detail="Failed to process resume.")
 
@@ -35,7 +35,10 @@ async def upload_resume(file: UploadFile = File(...)):
         RESUME_STORE[resume_id] = result  # Store full result instead of raw text
 
         print(f"[UPLOAD] Successfully processed and stored resume_id={resume_id}")
-        return {"resume_id": resume_id}
+        return {"resume_id": resume_id,  "name": result["name"],
+            "avatarUri": result["avatarUri"],
+            "summary": result["summary"],
+            "skills": result["skills"]}
     except ValueError as e:
         print(f"[UPLOAD] ValueError: {e}")
         raise HTTPException(status_code=400, detail=str(e))
