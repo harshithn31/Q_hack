@@ -1,0 +1,378 @@
+[
+  {
+    "id": 1,
+    "title": "Intro to Python",
+    "description": "Learn Python from scratch for data and web.",
+    "skills": ["Python", "Programming Basics"],
+    "price": 49,
+    "time_hours": 12,
+    "modules": [
+      {
+        "title": "Python Basics",
+        "description": "Syntax, variables, and data types.",
+        "subtopics": ["Syntax & Variables", "Data Types", "Input/Output"]
+      },
+      {
+        "title": "Control Flow & Functions",
+        "description": "If statements, loops, and defining functions.",
+        "subtopics": ["If/Else", "Loops", "Defining Functions"]
+      },
+      {
+        "title": "Working with Data",
+        "description": "Lists, dictionaries, and file operations.",
+        "subtopics": ["Lists & Dictionaries", "File I/O", "Basic Data Processing"]
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Frontend Web Essentials",
+    "description": "HTML, CSS, and JavaScript for beginners.",
+    "skills": ["HTML", "CSS", "JavaScript"],
+    "price": 59,
+    "time_hours": 15,
+    "modules": [
+      {
+        "title": "HTML Foundations",
+        "description": "Structure web pages with semantic HTML.",
+        "subtopics": ["Tags & Elements", "Forms", "Accessibility"]
+      },
+      {
+        "title": "CSS Styling",
+        "description": "Design and layout with CSS.",
+        "subtopics": ["Selectors", "Flexbox & Grid", "Responsive Design"]
+      },
+      {
+        "title": "JavaScript Basics",
+        "description": "Make web pages interactive.",
+        "subtopics": ["Variables & Types", "DOM Manipulation", "Events"]
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Machine Learning 101",
+    "description": "Intro to ML concepts and scikit-learn.",
+    "skills": ["Machine Learning", "scikit-learn"],
+    "price": 99,
+    "time_hours": 20,
+    "modules": [
+      {
+        "title": "ML Fundamentals",
+        "description": "Core concepts and types of machine learning.",
+        "subtopics": ["Supervised vs Unsupervised", "Overfitting", "Evaluation Metrics"]
+      },
+      {
+        "title": "Data Preparation",
+        "description": "Cleaning and preprocessing data.",
+        "subtopics": ["Missing Values", "Feature Scaling", "Train/Test Split"]
+      },
+      {
+        "title": "scikit-learn in Practice",
+        "description": "Building models with scikit-learn.",
+        "subtopics": ["Linear Regression", "Classification", "Model Validation"]
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "React Crash Course",
+    "description": "Build your first React app step-by-step.",
+    "skills": ["React", "JavaScript"],
+    "price": 79,
+    "time_hours": 18,
+    "modules": [
+      {
+        "title": "React Basics",
+        "description": "JSX, components, and props.",
+        "subtopics": ["JSX", "Functional Components", "Props"]
+      },
+      {
+        "title": "State & Effects",
+        "description": "useState, useEffect, and component lifecycle.",
+        "subtopics": ["useState", "useEffect", "Lifecycle"]
+      },
+      {
+        "title": "Routing & Forms",
+        "description": "React Router and handling user input.",
+        "subtopics": ["React Router", "Form Handling", "Validation"]
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Data Analysis with Pandas",
+    "description": "Analyze and visualize data using pandas and matplotlib.",
+    "skills": ["Pandas", "Data Analysis"],
+    "price": 89,
+    "time_hours": 16,
+    "modules": [
+      {
+        "title": "Pandas Basics",
+        "description": "DataFrames, Series, and indexing.",
+        "subtopics": ["DataFrames", "Indexing", "Selecting Data"]
+      },
+      {
+        "title": "Data Cleaning",
+        "description": "Handle missing data and outliers.",
+        "subtopics": ["Missing Values", "Outliers", "Data Types"]
+      },
+      {
+        "title": "Visualization with Matplotlib",
+        "description": "Plotting and visualizing data.",
+        "subtopics": ["Line & Bar Charts", "Histograms", "Customization"]
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Backend APIs with FastAPI",
+    "description": "Design RESTful APIs using FastAPI and Python.",
+    "skills": ["FastAPI", "APIs", "Python"],
+    "price": 69,
+    "time_hours": 14,
+    "modules": [
+      {
+        "title": "FastAPI Basics",
+        "description": "Endpoints, requests, and responses.",
+        "subtopics": ["Path & Query Params", "Request/Response Models", "Status Codes"]
+      },
+      {
+        "title": "Authentication & Security",
+        "description": "Securing APIs with FastAPI.",
+        "subtopics": ["OAuth2", "JWT", "CORS"]
+      },
+      {
+        "title": "Testing & Docs",
+        "description": "Testing APIs and using OpenAPI docs.",
+        "subtopics": ["pytest", "TestClient", "OpenAPI Docs"]
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Cloud Fundamentals (AWS)",
+    "description": "Get started with AWS cloud services and deployments.",
+    "skills": ["AWS", "Cloud", "DevOps"],
+    "price": 109,
+    "time_hours": 22,
+    "modules": [
+      {
+        "title": "AWS Core Services",
+        "description": "EC2, S3, and IAM basics.",
+        "subtopics": ["EC2", "S3", "IAM"]
+      },
+      {
+        "title": "Deployments & Networking",
+        "description": "VPC, load balancing, and deployments.",
+        "subtopics": ["VPC", "Load Balancer", "Elastic Beanstalk"]
+      },
+      {
+        "title": "Monitoring & Security",
+        "description": "CloudWatch, security groups, and best practices.",
+        "subtopics": ["CloudWatch", "Security Groups", "Best Practices"]
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "title": "SQL & Databases",
+    "description": "Master SQL queries and relational database design.",
+    "skills": ["SQL", "Databases"],
+    "price": 55,
+    "time_hours": 13,
+    "modules": [
+      {
+        "title": "SQL Basics",
+        "description": "SELECT, INSERT, UPDATE, DELETE queries.",
+        "subtopics": ["SELECT", "INSERT", "UPDATE", "DELETE"]
+      },
+      {
+        "title": "Database Design",
+        "description": "Normalization and schema design.",
+        "subtopics": ["Normalization", "ER Diagrams", "Indexes"]
+      },
+      {
+        "title": "Advanced SQL",
+        "description": "Joins, subqueries, and transactions.",
+        "subtopics": ["JOINs", "Subqueries", "Transactions"]
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "title": "Intro to Docker",
+    "description": "Containerize applications using Docker best practices.",
+    "skills": ["Docker", "Containers"],
+    "price": 65,
+    "time_hours": 10,
+    "modules": [
+      {
+        "title": "Docker Basics",
+        "description": "Images, containers, and Docker CLI.",
+        "subtopics": ["Images", "Containers", "Docker CLI"]
+      },
+      {
+        "title": "Docker Compose",
+        "description": "Multi-container applications with Compose.",
+        "subtopics": ["docker-compose.yml", "Networking", "Volumes"]
+      },
+      {
+        "title": "Best Practices",
+        "description": "Optimizing Dockerfiles and security.",
+        "subtopics": ["Dockerfile Optimization", "Security", "Image Size"]
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "title": "Data Visualization with D3.js",
+    "description": "Create interactive data visualizations for the web.",
+    "skills": ["D3.js", "Data Visualization"],
+    "price": 95,
+    "time_hours": 17,
+    "modules": [
+      {
+        "title": "D3.js Basics",
+        "description": "Selections, data binding, and SVG.",
+        "subtopics": ["Selections", "Data Binding", "SVG"]
+      },
+      {
+        "title": "Charts & Graphs",
+        "description": "Bar, line, and scatter plots.",
+        "subtopics": ["Bar Charts", "Line Charts", "Scatter Plots"]
+      },
+      {
+        "title": "Interactivity",
+        "description": "Adding tooltips and transitions.",
+        "subtopics": ["Tooltips", "Transitions", "Animations"]
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "title": "Natural Language Processing Basics",
+    "description": "Text mining, tokenization, and NLP workflows.",
+    "skills": ["NLP", "Text Mining"],
+    "price": 119,
+    "time_hours": 23,
+    "modules": [
+      {
+        "title": "NLP Fundamentals",
+        "description": "Tokenization, stemming, and lemmatization.",
+        "subtopics": ["Tokenization", "Stemming", "Lemmatization"]
+      },
+      {
+        "title": "Text Classification",
+        "description": "Bag-of-words and classification models.",
+        "subtopics": ["Bag-of-Words", "Naive Bayes", "SVM"]
+      },
+      {
+        "title": "NLP Workflows",
+        "description": "Pipelines and evaluation.",
+        "subtopics": ["Pipelines", "Evaluation", "Applications"]
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "title": "Git & Version Control",
+    "description": "Collaborate and manage code with Git and GitHub.",
+    "skills": ["Git", "GitHub", "Version Control"],
+    "price": 39,
+    "time_hours": 8,
+    "modules": [
+      {
+        "title": "Git Basics",
+        "description": "Commits, branches, and merges.",
+        "subtopics": ["Commits", "Branches", "Merges"]
+      },
+      {
+        "title": "Remote Repos",
+        "description": "Working with GitHub and remotes.",
+        "subtopics": ["GitHub", "Remotes", "Pull Requests"]
+      },
+      {
+        "title": "Collaboration",
+        "description": "Resolving conflicts and workflows.",
+        "subtopics": ["Merge Conflicts", "Workflows", "Best Practices"]
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "title": "Intro to TypeScript",
+    "description": "Type-safe JavaScript for scalable apps.",
+    "skills": ["TypeScript", "JavaScript"],
+    "price": 58,
+    "time_hours": 12,
+    "modules": [
+      {
+        "title": "TypeScript Basics",
+        "description": "Types, interfaces, and functions.",
+        "subtopics": ["Types", "Interfaces", "Functions"]
+      },
+      {
+        "title": "Type Safety",
+        "description": "Type inference and narrowing.",
+        "subtopics": ["Type Inference", "Type Guards", "Generics"]
+      },
+      {
+        "title": "TS & JS Integration",
+        "description": "Using TypeScript with JavaScript projects.",
+        "subtopics": ["tsconfig.json", "Interop", "Migration"]
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "title": "Kubernetes for Developers",
+    "description": "Orchestrate containers with Kubernetes.",
+    "skills": ["Kubernetes", "Containers", "DevOps"],
+    "price": 129,
+    "time_hours": 25,
+    "modules": [
+      {
+        "title": "K8s Basics",
+        "description": "Pods, deployments, and services.",
+        "subtopics": ["Pods", "Deployments", "Services"]
+      },
+      {
+        "title": "Config & Networking",
+        "description": "ConfigMaps, secrets, and networking.",
+        "subtopics": ["ConfigMaps", "Secrets", "Ingress"]
+      },
+      {
+        "title": "Scaling & Monitoring",
+        "description": "Horizontal scaling and observability.",
+        "subtopics": ["HPA", "Metrics", "Logging"]
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "title": "Agile Project Management",
+    "description": "Scrum, Kanban, and agile best practices.",
+    "skills": ["Agile", "Scrum", "Project Management"],
+    "price": 45,
+    "time_hours": 9,
+    "modules": [
+      {
+        "title": "Agile Foundations",
+        "description": "Principles and values of agile.",
+        "subtopics": ["Agile Manifesto", "Principles", "Values"]
+      },
+      {
+        "title": "Scrum Framework",
+        "description": "Roles, events, and artifacts in Scrum.",
+        "subtopics": ["Roles", "Events", "Artifacts"]
+      },
+      {
+        "title": "Kanban & Best Practices",
+        "description": "Kanban boards and agile practices.",
+        "subtopics": ["Kanban Boards", "WIP Limits", "Continuous Improvement"]
+      }
+    ]
+  }
+]
+

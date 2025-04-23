@@ -1,0 +1,44 @@
+[
+  {
+    "skill": "Python",
+    "module_title": "Intro to Python",
+    "quiz": [
+      {
+        "question": "Which of the following is a valid Python variable name?",
+        "options": ["1var", "var_1", "var-1", "var 1"],
+        "correct_answer": "var_1"
+      },
+      {
+        "question": "What does the 'print' function do in Python?",
+        "options": ["Outputs text to the console", "Reads input from the user", "Defines a variable", "Exits the program"],
+        "correct_answer": "Outputs text to the console"
+      },
+      {
+        "question": "Which symbol is used to comment a single line in Python?",
+        "options": ["//", "#", "<!-- -->", "/* */"],
+        "correct_answer": "#"
+      }
+    ]
+  },
+  {
+    "skill": "Machine Learning",
+    "module_title": "Intro to ML",
+    "quiz": [
+      {
+        "question": "Which library is commonly used for machine learning in Python?",
+        "options": ["NumPy", "scikit-learn", "Flask", "Django"],
+        "correct_answer": "scikit-learn"
+      },
+      {
+        "question": "What is overfitting?",
+        "options": ["Model fits training data too well", "Model performs well on new data", "Model has too few parameters", "Model uses too much RAM"],
+        "correct_answer": "Model fits training data too well"
+      },
+      {
+        "question": "Which is a supervised learning task?",
+        "options": ["Clustering", "Classification", "Dimensionality reduction", "PCA"],
+        "correct_answer": "Classification"
+      }
+    ]
+  }
+]
