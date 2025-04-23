@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Personalized Learning Marketplace (GenAI, Pydantic AI, LangGraph)
 
 ## Overview
@@ -1821,3 +1822,6 @@ Returns personalized bundle, pricing, and course recommendations.
 
 ## License
 [MIT or your choice]
+=======
+# Q_hack
+>>>>>>> 4a18980ce106d196dbaeadeda968cc0a168dbfe6
