@@ -5,6 +5,7 @@ export default function ResumeUpload({ onUpload }) {
   const inputRef = useRef();
 
   const handleFileChange = (e) => {
+    console.log("File selected:", e.target);
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
       onUpload(file);
