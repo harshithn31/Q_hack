@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from api.routes import router
 
 app = FastAPI(title="Personalized Learning Marketplace API")
-app.include_router(router, prefix="/api")
+app.include_router(router)
 
 if __name__ == "__main__":
     import uvicorn

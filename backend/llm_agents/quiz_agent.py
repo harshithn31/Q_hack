@@ -18,7 +18,7 @@ class QuizAgentOutput(BaseModel):
     quiz: List[QuizQuestion] = Field(..., description="List of MCQ questions.")
 
 quiz_agent = Agent(
-    "openai:gpt-4o",
+    "openai:gpt-4o-mini",
     output_type=QuizAgentOutput,
     system_prompt=(
         "Given a skill and module title, generate 3 multiple-choice questions to test understanding. "
