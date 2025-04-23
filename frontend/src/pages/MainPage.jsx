@@ -64,7 +64,7 @@ export default function MainPage() {
   return (
     <Stack
       direction={{ base: "column", lg: "row" }}
-      minH="100vh"
+      maxH="100vh"
       bg={{ base: "gray.50", md: "gray.100" }}
       _dark={{ bg: { base: "gray.900", md: "gray.800" } }}
       align="stretch"
