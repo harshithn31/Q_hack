@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent
 from typing import List, Dict
 from embeddings.loader import load_quiz
+import asyncio
 
 class QuizQuestion(BaseModel):
     question: str
@@ -39,7 +40,7 @@ async def get_quiz(current_skill: str, module_title: str) -> QuizAgentOutput:
 def validate_quiz_answers(quiz: List[QuizQuestion], answers: List[str]) -> Dict:
     correct = 0
     for q, a in zip(quiz, answers):
-        if a == q.correct_answer:
+        if a == q.correct_answer.lower():
             correct += 1
     score = correct / max(1, len(quiz))
     return {"score": score, "correct": correct, "total": len(quiz)}
@@ -47,8 +48,16 @@ def validate_quiz_answers(quiz: List[QuizQuestion], answers: List[str]) -> Dict:
 if __name__ == "__main__":
     # Example usage
     current_skill = "Python"
-    module_title = "Advanced Python Programming"
-    quiz_output = get_quiz(current_skill, module_title)
+    module_title = "Intro to Python"
+    quiz_output = asyncio.run(get_quiz(current_skill, module_title))
     print(quiz_output)
-    # print("Success")
-    validate_quiz_answers(quiz_output.quiz, ["A", "B", "C"])
+    answers = []
+    for q in quiz_output.quiz:
+        print(f"Q: {q.question}")
+        print(f"Options: {', '.join(q.options)}")
+        answers.append(str(input("Your answer: ")).lower()) 
+    validated_output = validate_quiz_answers(quiz_output.quiz, answers)
+    print(f"Score: {validated_output['score']}, Correct: {validated_output['correct']}/{validated_output['total']}")
+    print("Success")
+    
+    
