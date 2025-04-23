@@ -11,6 +11,7 @@ import fitz  # PyMuPDF
 from typing import BinaryIO
 
 
+
 def extract_resume_text(file: BinaryIO, filename: str) -> str:
     """
     Extracts text from a PDF or TXT resume file using fitz.
@@ -33,7 +34,7 @@ def extract_resume_text(file: BinaryIO, filename: str) -> str:
             raise ValueError(f"PDF extraction failed: {e}")
     elif filename.lower().endswith(".txt"):
         try:
-            text = file.read().decode("utf-8", errors="ignore")
+            text = file.decode("utf-8", errors="ignore")
             if not text.strip():
                 raise ValueError("No extractable text found in TXT.")
             return text.strip()
@@ -65,6 +66,8 @@ def extract_images_from_pdf(file: BinaryIO, output_dir: str = "images") -> list[
 
 
 # ------------ CLI Test Runner ------------
+from PIL import Image
+
 if __name__ == "__main__":
     test_files = [
         ("SampleResumeHack.pdf", "application/pdf"),
@@ -74,8 +77,22 @@ if __name__ == "__main__":
     for file_path, file_type in test_files:
         try:
             with open(file_path, "rb") as f:
-                content = extract_resume_text(f.read(), file_path)
+                file_bytes = f.read()
+                content = extract_resume_text(file_bytes, file_path)
                 print(f"\n✅ Extracted text from {file_path}:\n")
                 print(content[:1000])  # Limit preview to 1000 chars
+
+                if file_path.lower().endswith(".pdf"):
+                    print(f"\n🖼️ Extracting images from {file_path}...\n")
+                    image_paths = extract_images_from_pdf(file_bytes)
+                    print("Images extracted:", image_paths)
+
+                    for image_path in image_paths:
+                        try:
+                            img = Image.open(image_path)
+                            img.show()
+                        except Exception as img_error:
+                            print(f"⚠️ Could not display image {image_path}: {img_error}")
+
         except Exception as e:
             print(f"\n❌ Error processing {file_path}: {e}")
