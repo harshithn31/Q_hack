@@ -78,12 +78,11 @@ export default function MainPage() {
       <Box
         w="100%"
         maxW={{ base: "100%", sm: "480px", lg: "340px" }}
-        mb={{ base: 4, lg: 0 }}
-        alignSelf="center"
+        mb={{ base: 0, lg: 0 }}
         px={{ base: 0, sm: 2 }}
       >
-        <ProfileCard name="Jane Doe" avatarUrl="https://bit.ly/broken-link" />
-        <Box mt={6}><XPBadge xp={xp} badges={badges} /></Box>
+        <ProfileCard name="Jane Doe" avatarUrl="https://bit.ly/broken-link"/>
+        {/* <Box mt={6}><XPBadge xp={xp} badges={badges} /></Box> */}
       </Box>
       <Box
         w="100%"

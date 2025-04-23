@@ -30,8 +30,8 @@ export default function ChatBot({ onPipelineComplete }) {
   };
 
   return (
-    <Box p={4} bg="white" borderRadius="md" minH="350px" boxShadow="md">
-      <VStack align="stretch" spacing={2} mb={3} maxH="250px" overflowY="auto">
+    <Box p={4} bg="white" borderRadius="md"  boxShadow="md">
+      <VStack align="stretch" spacing={2} mb={3} maxH="90vh" overflowY="auto">
         {messages.map((msg, i) => (
           <Text key={i} color={msg.role === "user" ? "blue.700" : "gray.700"}>
             <b>{msg.role === "user" ? "You" : msg.role === "bot" ? "Bot" : "System"}:</b> {msg.content}
