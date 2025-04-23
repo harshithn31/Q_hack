@@ -18,7 +18,7 @@ class QuizAgentOutput(BaseModel):
     quiz: List[QuizQuestion] = Field(..., description="List of MCQ questions.")
 
 quiz_agent = Agent(
-    "openai:gpt-4o",
+    "openai:gpt-4o-mini",
     output_type=QuizAgentOutput,
     system_prompt=(
         "Given a skill and module title, generate 3 multiple-choice questions to test understanding. "
@@ -43,3 +43,12 @@ def validate_quiz_answers(quiz: List[QuizQuestion], answers: List[str]) -> Dict:
             correct += 1
     score = correct / max(1, len(quiz))
     return {"score": score, "correct": correct, "total": len(quiz)}
+
+if __name__ == "__main__":
+    # Example usage
+    current_skill = "Python"
+    module_title = "Advanced Python Programming"
+    quiz_output = get_quiz(current_skill, module_title)
+    print(quiz_output)
+    # print("Success")
+    validate_quiz_answers(quiz_output.quiz, ["A", "B", "C"])
