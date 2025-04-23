@@ -16,7 +16,7 @@ export default function ProfileCard({ data= {} }) {
       <Text color="gray.500" mb={4}>Learner</Text>
 
       <VStack align="start" spacing={3}>
-        <Box>
+        <Box w="100%">
           <Text fontWeight="bold" mb={1}>Summary</Text>
           <Text color="gray.600" fontSize="sm">{summary}</Text>
         </Box>
