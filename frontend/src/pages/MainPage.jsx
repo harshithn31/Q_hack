@@ -17,6 +17,12 @@ export default function MainPage() {
   const [bundle, setBundle] = useState([]); // Will be set from backend API
   const [budget, setBudget] = useState(200);
   const [resumeId, setResumeId] = useState(null);
+	const [profileData, setProfileData] = useState({
+		name: "Jane Doe",
+		avatarUrl: "https://bit.ly/broken-link",
+		summary: "A passionate developer exploring tech and career growth.",
+		skills: ["C++", "React", "Machine Learning", "Life Planning"],
+	});
 
   const handleUpload = async (file) => {
     try {
@@ -28,7 +34,14 @@ export default function MainPage() {
       });
       if (!res.ok) throw new Error("Failed to upload resume");
       const data = await res.json();
+			console.log(data);
       setResumeId(data.resume_id || null);
+			setProfileData({
+				name: data.name,
+				avatarUrl: data.avatarUrl,
+				summary: data.summary,
+				skills: data.skills
+			});
       setStage("chat");
     } catch (err) {
       alert("Could not upload resume: " + err.message);
@@ -81,13 +94,8 @@ export default function MainPage() {
         mb={{ base: 0, lg: 0 }}
         px={{ base: 0, sm: 2 }}
       >
-        <ProfileCard 
-					name="Jane Doe"
-					avatarUrl="https://bit.ly/broken-link"
-					summary = "A passionate developer exploring tech and career growth."
-					skills = {["Python", "React", "Machine Learning", "Life Planning"]}
-					/>
-        {/* <Box mt={6}><XPBadge xp={xp} badges={badges} /></Box> */}
+			{profileData && <ProfileCard data={profileData} />}
+      {/* <Box mt={6}><XPBadge xp={xp} badges={badges} /></Box> */}
       </Box>
       <Box
         w="100%"
