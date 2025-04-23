@@ -1,12 +1,14 @@
 
 import { Avatar, Box, Heading, Text, VStack, Tag, Wrap, WrapItem } from "@chakra-ui/react";
 
-export default function ProfileCard({
-  name = "Jane Doe",
-  avatarUrl = "https://bit.ly/broken-link",
-  summary = "A passionate learner exploring tech and career growth.",
-  skills = ["Python", "React", "Machine Learning", "Career Planning"],
-}) {
+export default function ProfileCard({ data= {} }) { 
+	const {
+    name = "Anonymous",
+    avatarUrl = "",
+    summary = "No summary available.",
+    skills = [],
+  } = data;
+
   return (
     <Box p={6} bg="white" borderRadius="lg" boxShadow="md" textAlign="center" minHeight="80vh">
       <Avatar size="2xl" src={avatarUrl} mb={4} />
