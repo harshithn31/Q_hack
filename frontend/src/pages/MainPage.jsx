@@ -20,7 +20,7 @@ export default function MainPage() {
 	const [profileData, setProfileData] = useState({
 		name: "Jane Doe",
 		avatarUrl: "https://bit.ly/broken-link",
-		summary: "No summay is aviable",
+		summary: "No summay is avaiable",
 		skills: [],
 	});
 
