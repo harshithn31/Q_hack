@@ -36,21 +36,26 @@ def build_rag_retriever(resume_chunks):
 class ResumeAgentOutput(BaseModel):
     skills: list[str] = Field(..., description="List of extracted skills.")
     summary: str = Field(..., description="Short summary of the candidate.")
+    encouragement_message: str = Field(..., description="Encouraging feedback on the resume.")
+    ask_goal_message: str = Field(..., description="Friendly prompt asking about upskilling goals.")
 
 resume_agent = Agent(
     "openai:gpt-4o-mini",
     api_key=OPENAI_API_KEY,
     output_type=ResumeAgentOutput,
     system_prompt=(
-        "You are an expert career assistant. Based ONLY on the provided resume text, "
-        "extract a JSON array of the candidate's key technical skills (use exact terms found in the text, no guessing, lowercase, no duplicates), "
-        "and write a 1–2 sentence summary of the candidate's experience based strictly on what’s written. "
-        "Do not create information not present in the text. Respond in this JSON format: {\"skills\": [...], \"summary\": \"...\"}"
+        "You are an expert career buddy. Based ONLY on the provided resume text, "
+        "extract a JSON array of the candidate's key technical skills (use exact terms found in the text, no guessing, lowercase, no duplicates). "
+        "Then write a 1–2 sentence summary of the candidate's experience based strictly on what’s written. Keep it professional and concise. "
+        "Next, generate a friendly, encouraging message that highlights their strengths and accomplishments in a supportive tone. "
+        "Finally, ask the user what skills or roles they are interested in upskilling for, as a career mentor would. "
+        "Respond in this JSON format: {\"skills\": [...], \"summary\": \"...\", \"encouragement_message\": \"...\", \"ask_goal_message\": \"...\"}"
     ),
 )
 
 async def extract_with_agent(text):
     result = await resume_agent.run(text)
+    # Return all output fields, including encouragement and ask_goal_message
     return result.output
 
 

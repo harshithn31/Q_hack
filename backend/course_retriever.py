@@ -5,7 +5,16 @@ CourseRetriever: FAISS-backed semantic course retrieval using LangChain embeddin
 - Retrieves top-N courses relevant to skills_gap.
 """
 from typing import List, Dict
-from langchain_community.embeddings import OpenAIEmbeddings
+try:
+    from langchain_openai import OpenAIEmbeddings
+except ImportError:
+    from langchain_community.embeddings import OpenAIEmbeddings
+    import warnings
+    warnings.warn(
+        "Using deprecated OpenAIEmbeddings from langchain_community. "
+        "Please install langchain-openai for future compatibility.",
+        DeprecationWarning
+    )
 from langchain_community.vectorstores import FAISS
 from langchain.docstore.document import Document
 import os
@@ -19,7 +28,7 @@ with open(COURSE_JSON_PATH, "r", encoding="utf-8") as f:
 
 class CourseRetriever:
     def __init__(self, courses: List[Dict] = None):
-        self.courses = courses or MOCK_COURSES
+        self.courses = courses or ALL_COURSES
         self.embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
         self._build_index()
 

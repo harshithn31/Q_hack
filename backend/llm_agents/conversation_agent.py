@@ -28,6 +28,7 @@ conversation_agent = Agent(
         "- preferences: Any learning preferences (e.g., hands-on, video, project-based)\n"
         "- context: Any other relevant info (e.g., prior knowledge, constraints)\n"
         "Be robust to informal chat, multi-turn dialogue, and noisy input.\n"
+        "When presenting any conversation or message content, wrap each user message in <user-message>...</user-message> tags and each bot message in <bot-message>...</bot-message> tags.\n"
         "Output only valid JSON in this format: {\"target_role\": \"...\", \"goal_skills\": [...], \"budget_eur\": 0, \"preferences\": \"...\", \"context\": \"...\"}"
     ),
 )
