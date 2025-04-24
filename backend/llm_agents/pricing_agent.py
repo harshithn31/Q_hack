@@ -50,3 +50,25 @@ pricing_agent = Agent(
 # Usage example (async):
 # result = await pricing_agent.run(recommended_courses=[...], budget_eur=200)
 # print(result.output)
+
+
+if __name__ == "__main__":
+    import asyncio
+    from dotenv import load_dotenv
+    import os
+
+    load_dotenv()
+    api_key = os.getenv("OPENAI_API_KEY")
+    print(f"API Key: {api_key}")  # Debugging line to check if the key is loaded
+
+    async def main():
+        # Example usage of the pricing agent
+        recommended_modules = [
+            Module(course_title="Course A", module_title="Module A1", module_description="Description A1", selected_subtopics=["Subtopic A1"], why_selected="Relevant for skill X", price=100),
+            Module(course_title="Course B", module_title="Module B1", module_description="Description B1", selected_subtopics=["Subtopic B1"], why_selected="Relevant for skill Y", price=200),
+        ]
+        budget_eur = 150
+        result = await pricing_agent.run(recommended_modules=recommended_modules, budget_eur=budget_eur)
+        print(result.output)
+
+    asyncio.run(main())

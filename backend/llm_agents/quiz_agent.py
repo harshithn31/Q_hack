@@ -67,10 +67,10 @@ validate_agent = Agent(
     )
 )
 
-async def get_quiz(current_skill: str, module_title: str) -> QuizAgentOutput:
+async def get_quiz(course_title: str, module_title: str, topics: List[str]) -> QuizAgentOutput:
     
     dynamic_system_prompt = f"""
-    You are a quiz generator. Given the module title "{module_title}"and course title{current_skill}, generate a quiz with 10 multiple-choice questions. 
+    You are a quiz generator. Given the module title "{module_title}", course title : {course_title}, topics: {topics} generate a quiz with 10 multiple-choice questions. 
     These questions should focus on the specific subject of the module and test knowledge on its key concepts.
     Each question should have 4 options, and the correct answer should be clearly indicated.
     The goal is to test key concepts and practical applications of the module.
@@ -79,13 +79,7 @@ async def get_quiz(current_skill: str, module_title: str) -> QuizAgentOutput:
     Respond in this JSON format:
     {{ "quiz": [{{"question": ..., "options": [...], "correct_answer": ...}}, ...] }}
     """
-    
-    # Try static pool first
-    static_quiz = load_quiz(current_skill, module_title)
-    static_quiz = False
-    if static_quiz:
-        return QuizAgentOutput(quiz=[QuizQuestion(**q) for q in static_quiz])
-    # Fallback to LLM
+
     result = await quiz_agent.run(dynamic_system_prompt)
     return result.output
 
@@ -133,9 +127,10 @@ async def validate_quiz_answers(quiz: List[QuizQuestion], answers: List[str]) ->
     
 async def take_quiz():
     # Example usage
-    current_skill = "Python"
+    course_title = "Python"
     module_title = "basic of python"
-    quiz_output = await get_quiz(current_skill, module_title)
+    topics = ["Python Basics", "Data Types", "Control Structures", "Functions"]
+    quiz_output = await get_quiz(course_title, module_title, topics)
     print(quiz_output)
     answers = []
     for q in quiz_output.quiz:
