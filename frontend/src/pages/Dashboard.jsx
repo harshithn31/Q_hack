@@ -12,6 +12,105 @@ const MOCK_QUIZ_HISTORY = [
   { module: "Machine Learning 101", score: 2, total: 3, date: "2025-04-21" },
 ];
 
+// Animated Quiz component for answer feedback
+// Inject keyframes for blinking
+const styles = `
+@keyframes blink-green {
+  0%, 100% { background: #38A169; }
+  50% { background: #68D391; }
+}
+@keyframes blink-red {
+  0%, 100% { background: #E53E3E; }
+  50% { background: #FEB2B2; }
+}`;
+if (typeof window !== "undefined" && !document.getElementById("quiz-anim-style")) {
+  const styleTag = document.createElement("style");
+  styleTag.id = "quiz-anim-style";
+  styleTag.innerHTML = styles;
+  document.head.appendChild(styleTag);
+}
+
+function QuizAnimated({ quizData, onClose }) {
+  const [selected, setSelected] = useState({}); // {qIdx: option}
+  const [answered, setAnswered] = useState({}); // {qIdx: 'correct'|'wrong'}
+
+  const handleSelect = (qIdx, option) => {
+    if (answered[qIdx]) return;
+    setSelected((prev) => ({ ...prev, [qIdx]: option }));
+    const isCorrect = quizData[qIdx].correct_answer === option;
+    setAnswered((prev) => ({ ...prev, [qIdx]: isCorrect ? "correct" : "wrong" }));
+  };
+
+  return (
+    <Box>
+      {quizData.map((q, qIdx) => (
+        <Box key={qIdx} mb={6} p={3} borderWidth={1} borderRadius="lg">
+          <Text fontWeight="bold" mb={2}>{q.question}</Text>
+          <VStack align="stretch" spacing={2}>
+            {q.options.map((opt, oIdx) => {
+              const isSelected = selected[qIdx] === opt;
+              const isAnswered = answered[qIdx];
+              const isCorrect = q.correct_answer === opt;
+              let bg = "gray.100";
+              let anim = "";
+
+              if (isAnswered) {
+                if (isSelected && isCorrect) {
+                  bg = "green.400";
+                  anim = "blink-green 0.6s linear 2";
+                } else if (isSelected && !isCorrect) {
+                  bg = "red.400";
+                  anim = "blink-red 0.6s linear 2";
+                } else if (isCorrect) {
+                  bg = "green.300";
+                }
+              }
+
+              return (
+                <Button
+                  key={oIdx}
+                  w="100%"
+                  variant="outline"
+                  colorScheme={
+                    isAnswered
+                      ? isCorrect
+                        ? "green"
+                        : isSelected
+                          ? "red"
+                          : "gray"
+                      : "blue"
+                  }
+                  bg={bg}
+                  style={{ animation: anim }}
+                  onClick={() => handleSelect(qIdx, opt)}
+                  isDisabled={!!isAnswered}
+                  _hover={isAnswered ? {} : undefined}
+                >
+                  {opt}
+                </Button>
+              );
+            })}
+          </VStack>
+          {answered[qIdx] && (
+            <Text mt={2} color={answered[qIdx] === "correct" ? "green.600" : "red.600"} fontWeight="bold">
+              {answered[qIdx] === "correct"
+                ? "Correct!"
+                : (
+                  <>
+                    Wrong. Correct answer: <span style={{ color: '#38A169' }}>{q.correct_answer}</span>
+                  </>
+                )}
+            </Text>
+          )}
+        </Box>
+      ))}
+      <HStack justify="flex-end" mt={4}>
+        <Button colorScheme="blue" onClick={onClose}>Close</Button>
+      </HStack>
+    </Box>
+  );
+}
+
 export default function Dashboard({ onGoHome }) {
   const [xp] = useState(MOCK_XP);
   const [badges] = useState(MOCK_BADGES);
@@ -34,6 +133,7 @@ export default function Dashboard({ onGoHome }) {
       }
       const data = await res.json();
       setQuizData(data.quiz);
+      console.log(data);
       onOpen();
     } catch (error) {
       console.error("Failed to fetch quiz data:", error);
@@ -112,31 +212,17 @@ export default function Dashboard({ onGoHome }) {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader borderBottomWidth="1px">Quiz</DrawerHeader>
-		<DrawerBody>
-  {loading ? (
-    <Spinner />
-  ) : quizData ? (
-    <Box>
-      {quizData.map((q, idx) => (
-        <Box key={idx} mb={4}>
-          <Text fontWeight="bold">{q.question}</Text>
-          <VStack align="start" mt={2}>
-            {q.options.map((opt, i) => (
-              <Button key={i} variant="outline" size="sm">
-                {opt}
-              </Button>
-            ))}
-          </VStack>
-        </Box>
-      ))}
-    </Box>
-  ) : (
-    <Text>No quiz data available.</Text>
-  )}
-</DrawerBody>
+          <DrawerBody>
+            {loading ? (
+              <Spinner />
+            ) : quizData ? (
+              <QuizAnimated quizData={quizData} onClose={onClose} />
+            ) : (
+              <Text>No quiz data available.</Text>
+            )}
+          </DrawerBody>
         </DrawerContent>
       </Drawer>
     </Box>
   );
 }
-
