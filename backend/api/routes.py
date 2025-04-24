@@ -8,6 +8,9 @@ from graph.dag import run_full_pipeline
 from llm_agents.quiz_agent import get_quiz, validate_quiz_answers, QuizQuestion
 from embeddings.utils import extract_resume_text
 from typing import List, Dict
+from llm_agents.module_description_agent import get_module_description
+from llm_agents.update_module_description_agent import get_updated_module_description
+from llm_agents.suggestion_agent import get_suggestion_agent_response
 
 from backend.llm_agents.explanation_agent import get_explanation, ExplanationOutput, ExplanationRequest
 
@@ -54,6 +57,39 @@ async def get_resume_text(resume_id: str):
         raise HTTPException(status_code=404, detail="Resume not found")
     return {"text": text}
 
+
+
+class QuizRequest(BaseModel):
+    user_id: str
+    course_title: str
+    module_title: str
+    module_topics: List[str] = []  # Optional list of topics to guide quiz generation
+
+class QuizSubmitRequest(BaseModel):
+    user_id: str
+    quiz: List[Dict]
+    answers: List[str]
+    
+class ContentRequest(BaseModel):
+    course_title: str
+    module_title: str
+    module_topics: List[str] = []
+
+class ContentRequestUpdate(BaseModel):
+    course_title: str
+    module_title: str
+    module_topics: List[str] = []
+    wrong_questions: List[str] = []  # Optional list of wrong questions to guide content update
+
+class ContentSuggestion(BaseModel):
+    course_title: str
+    module_title: str
+    module_topics: List[str] = []
+    wrong_questions: List[str] = []  # Optional list of wrong questions to guide content suggestion
+    
+
+
+
 @router.post("/recommend-bundle")
 async def recommend_bundle(request: PipelineRequest):
     """
@@ -73,6 +109,36 @@ async def recommend_bundle(request: PipelineRequest):
         "recommended_modules": state.recommended_modules or [],
         "final_bundle": state.final_bundle or [],
     }
+
+
+@router.post("/content_generator")
+async def content_generator(request: ContentRequest):
+    """
+    Generates a module description based on course title, module title, and optional topics.
+    Returns a concise and engaging summary of the module's key concepts.
+    """
+    module_description = await get_module_description(request.course_title, request.module_title, request.module_topics)
+    return {"description": module_description.description}
+
+@router.post("/content_updater")
+async def content_updater(request: ContentRequestUpdate):
+    """
+    Updates the module description based on course title, module title, and optional topics.
+    Returns a concise and engaging summary of the module's key concepts.
+    """
+    # Placeholder for content update logic (e.g., updating a database)
+    # In a real-world scenario, this would involve more complex operations.
+    module_description = await get_module_description(request.course_title, request.module_title, request.module_topics, request.wrong_questions)
+    return {"description": module_description.description}
+    
+@router.post("/suggestion")
+async def suggestion(request: ContentSuggestion):
+    """
+    Generates a personalized learning suggestion based on course title, module title, and optional topics.
+    Returns a concise and engaging summary of the module's key concepts.
+    """
+    suggestion = await get_suggestion_agent_response(request.course_title, request.module_title, request.module_topics, request.wrong_questions)
+    return {"suggestion": suggestion.description}
 
 @router.post(
     "/explanation",
@@ -104,9 +170,10 @@ class QuizSubmitRequest(BaseModel):
     quiz: List[Dict]
     answers: List[str]
 
+
 @router.post("/quiz")
 async def get_quiz_endpoint(request: QuizRequest):
-    quiz_output = await get_quiz(request.current_skill, request.module_title)
+    quiz_output = await get_quiz(request.course_title, request.module_title, request.module_topics)
     return {"quiz": [q.dict() for q in quiz_output.quiz]}
 
 @router.post("/quiz/submit")
