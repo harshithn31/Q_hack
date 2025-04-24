@@ -8,6 +8,7 @@ from graph.dag import run_full_pipeline
 from llm_agents.quiz_agent import get_quiz, validate_quiz_answers, QuizQuestion
 from embeddings.utils import extract_resume_text
 from typing import List, Dict
+from resume_parser_main import process_resume
 
 router = APIRouter()
 
@@ -22,24 +23,28 @@ RESUME_STORE = {}
 @router.post("/upload-resume")
 async def upload_resume(file: UploadFile = File(...)):
     print(f"[UPLOAD] Received upload request: filename={file.filename}, content_type={file.content_type}")
-    """
-    Accepts a PDF or TXT resume, extracts text securely, and returns a resume_id for later use.
-    """
     try:
-        text = extract_resume_text(await file.read(), file.filename)
-        if not text.strip():
-            print(f"[UPLOAD] Extraction failed: No extractable text found in {file.filename}")
-            raise HTTPException(status_code=400, detail="No extractable text found in resume.")
+        file_bytes = await file.read()
+
+        # Run the AI pipeline
+        result = await process_resume(file_bytes, file.filename)
+        if result is None:
+            raise HTTPException(status_code=400, detail="Failed to process resume.")
+
         resume_id = str(uuid.uuid4())
-        RESUME_STORE[resume_id] = text
-        print(f"[UPLOAD] Successfully stored resume_id={resume_id} for {file.filename}")
-        return {"resume_id": resume_id}
+        RESUME_STORE[resume_id] = result  # Store full result instead of raw text
+
+        print(f"[UPLOAD] Successfully processed and stored resume_id={resume_id}")
+        return {"resume_id": resume_id,  "name": result["name"],
+            "avatarUri": result["avatarUri"],
+            "summary": result["summary"],
+            "skills": result["skills"]}
     except ValueError as e:
         print(f"[UPLOAD] ValueError: {e}")
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         print(f"[UPLOAD] Unexpected error: {e}")
-        raise HTTPException(status_code=500, detail="Resume extraction failed due to a server error.")
+        raise HTTPException(status_code=500, detail="Resume processing failed due to a server error.")
 
 class PipelineRequest(BaseModel):
     resume_id: str
@@ -47,10 +52,11 @@ class PipelineRequest(BaseModel):
 
 @router.get("/get-resume-text/{resume_id}")
 async def get_resume_text(resume_id: str):
-    text = RESUME_STORE.get(resume_id)
-    if not text:
+    data = RESUME_STORE.get(resume_id)
+    if not data:
         raise HTTPException(status_code=404, detail="Resume not found")
-    return {"text": text}
+    return data
+
 
 
 class QuizRequest(BaseModel):
