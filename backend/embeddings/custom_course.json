@@ -1,0 +1,70 @@
+{
+  "course_name": "Intro to Python",
+  "course_description": "Learn Python from scratch for data and web.",
+  "skills": [
+    {
+      "skill_name": "Python",
+      "skill_description": "Fundamental language for scripting, automation, and data analysis."
+    },
+    {
+      "skill_name": "Programming Basics",
+      "skill_description": "Core concepts like variables, control flow, and functions."
+    }
+  ],
+  "price": 49,
+  "duration_hours": 12,
+  "modules": {
+    "Python Basics": {
+      "module_description": "Get started with Python syntax and simple operations.",
+      "submodules": [
+        {
+          "submodule_title": "Syntax & Variables",
+          "submodule_description": "Learn how to write valid Python code and store data in variables."
+        },
+        {
+          "submodule_title": "Data Types",
+          "submodule_description": "Explore built-in types like strings, numbers, lists, and booleans."
+        },
+        {
+          "submodule_title": "Input/Output",
+          "submodule_description": "Handle user input and display results in the console."
+        }
+      ]
+    },
+    "Control Flow & Functions": {
+      "module_description": "Control execution paths and build reusable code blocks.",
+      "submodules": [
+        {
+          "submodule_title": "If/Else",
+          "submodule_description": "Make decisions in your code with conditional statements."
+        },
+        {
+          "submodule_title": "Loops",
+          "submodule_description": "Automate tasks by iterating over sequences."
+        },
+        {
+          "submodule_title": "Defining Functions",
+          "submodule_description": "Create and invoke functions to organize your code."
+        }
+      ]
+    },
+    "Working with Data": {
+      "module_description": "Learn to store, retrieve, and process collections of data.",
+      "submodules": [
+        {
+          "submodule_title": "Lists & Dictionaries",
+          "submodule_description": "Manage ordered and key-value collections in Python."
+        },
+        {
+          "submodule_title": "File I/O",
+          "submodule_description": "Read from and write to text and CSV files on your computer."
+        },
+        {
+          "submodule_title": "Basic Data Processing",
+          "submodule_description": "Perform simple transformations and summaries on datasets."
+        }
+      ]
+    }
+  }
+}
+

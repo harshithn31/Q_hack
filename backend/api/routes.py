@@ -12,6 +12,8 @@ from llm_agents.module_description_agent import get_module_description
 from llm_agents.update_module_description_agent import get_updated_module_description
 from llm_agents.suggestion_agent import get_suggestion_agent_response
 
+from backend.llm_agents.explanation_agent import get_explanation, ExplanationOutput, ExplanationRequest
+
 router = APIRouter()
 
 # Simple in-memory XP/badge store for demo (keyed by user_id)
@@ -56,6 +58,7 @@ async def get_resume_text(resume_id: str):
     return {"text": text}
 
 
+
 class QuizRequest(BaseModel):
     user_id: str
     course_title: str
@@ -85,6 +88,8 @@ class ContentSuggestion(BaseModel):
     wrong_questions: List[str] = []  # Optional list of wrong questions to guide content suggestion
     
 
+
+
 @router.post("/recommend-bundle")
 async def recommend_bundle(request: PipelineRequest):
     """
@@ -104,6 +109,7 @@ async def recommend_bundle(request: PipelineRequest):
         "recommended_modules": state.recommended_modules or [],
         "final_bundle": state.final_bundle or [],
     }
+
 
 @router.post("/content_generator")
 async def content_generator(request: ContentRequest):
@@ -133,6 +139,37 @@ async def suggestion(request: ContentSuggestion):
     """
     suggestion = await get_suggestion_agent_response(request.course_title, request.module_title, request.module_topics, request.wrong_questions)
     return {"suggestion": suggestion.description}
+
+@router.post(
+    "/explanation",
+    response_model=ExplanationOutput,
+    summary="Explain or reinforce a piece of text based on user diagnostics."
+)
+async def get_explanation_endpoint(req: ExplanationRequest) -> ExplanationOutput:
+    """
+    - If the request has no scale/questions/answers, returns the raw text.
+    - Otherwise, generates an enhanced explanation via LLM, targeting the user's weak points.
+    """
+    dicti = {}
+    return await get_explanation(
+        raw_text=req.raw_text,
+        scale=req.scale,
+        questions=req.questions,
+        answers=req.answers,
+        knowledge=dicti,
+    )
+
+
+class QuizRequest(BaseModel):
+    user_id: str
+    current_skill: str
+    module_title: str
+
+class QuizSubmitRequest(BaseModel):
+    user_id: str
+    quiz: List[Dict]
+    answers: List[str]
+
 
 @router.post("/quiz")
 async def get_quiz_endpoint(request: QuizRequest):

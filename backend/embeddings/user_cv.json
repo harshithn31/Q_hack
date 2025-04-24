@@ -1,0 +1,114 @@
+{
+  "personal_info": {
+    "first_name": "Alex",
+    "last_name": "Smith",
+    "date_of_birth": "1990-07-15",
+    "address": {
+      "street": "123 Oak Avenue",
+      "city": "Springfield",
+      "state": "IL",
+      "zip_code": "62704",
+      "country": "USA"
+    },
+    "contact": {
+      "email": "alex.smith@example.com",
+      "phone": "+1-555-123-4567",
+      "linkedin": "https://www.linkedin.com/in/alexsmith",
+      "website": "https://alexsmith.dev"
+    }
+  },
+  "professional_summary": "Results-driven software engineer with 5+ years of experience building scalable web applications and data pipelines.",
+  "education": [
+    {
+      "degree": "Master of Science in Computer Science",
+      "institution": "University of Illinois at Urbana-Champaign",
+      "start_date": "2012-08-01",
+      "end_date": "2014-05-15",
+      "details": [
+        "GPA: 3.9/4.0",
+        "Thesis: Distributed Systems Optimization"
+      ]
+    },
+    {
+      "degree": "Bachelor of Science in Information Technology",
+      "institution": "Illinois State University",
+      "start_date": "2008-08-01",
+      "end_date": "2012-05-15",
+      "details": [
+        "GPA: 3.7/4.0",
+        "Graduated with Honors"
+      ]
+    }
+  ],
+  "work_experience": [
+    {
+      "job_title": "Senior Software Engineer",
+      "company": "TechSolutions Inc.",
+      "location": "Chicago, IL",
+      "start_date": "2018-06-01",
+      "end_date": "Present",
+      "responsibilities": [
+        "Lead a team of 5 engineers to deliver microservices for the core product.",
+        "Architected and implemented a CI/CD pipeline reducing deployment times by 40%.",
+        "Mentored junior developers and conducted code reviews."
+      ]
+    },
+    {
+      "job_title": "Software Engineer",
+      "company": "WebWorks LLC",
+      "location": "Peoria, IL",
+      "start_date": "2014-07-01",
+      "end_date": "2018-05-31",
+      "responsibilities": [
+        "Developed RESTful APIs in Python and Node.js.",
+        "Collaborated with front-end team to integrate UI components.",
+        "Optimized database queries, improving response time by 25%."
+      ]
+    }
+  ],
+  "skills": {
+    "programming_languages": ["Python", "JavaScript", "Java", "SQL"],
+    "frameworks": ["Django", "React", "Node.js", "Spring Boot"],
+    "tools": ["Git", "Docker", "Kubernetes", "Jenkins"],
+    "methodologies": ["Agile Scrum", "TDD", "CI/CD"]
+  },
+  "projects": [
+    {
+      "name": "E-Commerce Analytics Dashboard",
+      "description": "Built a real-time analytics dashboard using React and WebSocket for a retail client.",
+      "technologies": ["React", "Django", "PostgreSQL", "Chart.js"],
+      "link": "https://github.com/alexsmith/analytics-dashboard"
+    },
+    {
+      "name": "Automated Reporting Bot",
+      "description": "Developed a Python bot that generates and emails weekly performance reports.",
+      "technologies": ["Python", "Pandas", "SMTP"],
+      "link": null
+    }
+  ],
+  "certifications": [
+    {
+      "name": "AWS Certified Solutions Architect – Associate",
+      "issuer": "Amazon Web Services",
+      "date_obtained": "2019-09-20",
+      "expiration_date": "2022-09-20"
+    },
+    {
+      "name": "Certified Kubernetes Administrator (CKA)",
+      "issuer": "The Linux Foundation",
+      "date_obtained": "2020-05-15",
+      "expiration_date": "2023-05-15"
+    }
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "proficiency": "Native"
+    },
+    {
+      "language": "German",
+      "proficiency": "Professional working proficiency"
+    }
+  ],
+  "interests": ["Open-source contribution", "Hiking", "Photography"]
+}
