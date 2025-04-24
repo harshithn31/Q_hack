@@ -9,6 +9,8 @@ from llm_agents.quiz_agent import get_quiz, validate_quiz_answers, QuizQuestion
 from embeddings.utils import extract_resume_text
 from typing import List, Dict
 
+from backend.llm_agents.explanation_agent import get_explanation, ExplanationOutput, ExplanationRequest
+
 router = APIRouter()
 
 # Simple in-memory XP/badge store for demo (keyed by user_id)
@@ -52,17 +54,6 @@ async def get_resume_text(resume_id: str):
         raise HTTPException(status_code=404, detail="Resume not found")
     return {"text": text}
 
-
-class QuizRequest(BaseModel):
-    user_id: str
-    current_skill: str
-    module_title: str
-
-class QuizSubmitRequest(BaseModel):
-    user_id: str
-    quiz: List[Dict]
-    answers: List[str]
-
 @router.post("/recommend-bundle")
 async def recommend_bundle(request: PipelineRequest):
     """
@@ -82,6 +73,36 @@ async def recommend_bundle(request: PipelineRequest):
         "recommended_modules": state.recommended_modules or [],
         "final_bundle": state.final_bundle or [],
     }
+
+@router.post(
+    "/explanation",
+    response_model=ExplanationOutput,
+    summary="Explain or reinforce a piece of text based on user diagnostics."
+)
+async def get_explanation_endpoint(req: ExplanationRequest) -> ExplanationOutput:
+    """
+    - If the request has no scale/questions/answers, returns the raw text.
+    - Otherwise, generates an enhanced explanation via LLM, targeting the user's weak points.
+    """
+    dicti = {}
+    return await get_explanation(
+        raw_text=req.raw_text,
+        scale=req.scale,
+        questions=req.questions,
+        answers=req.answers,
+        knowledge=dicti,
+    )
+
+
+class QuizRequest(BaseModel):
+    user_id: str
+    current_skill: str
+    module_title: str
+
+class QuizSubmitRequest(BaseModel):
+    user_id: str
+    quiz: List[Dict]
+    answers: List[str]
 
 @router.post("/quiz")
 async def get_quiz_endpoint(request: QuizRequest):
