@@ -18,7 +18,7 @@ class ConversationAgentOutput(BaseModel):
     context: Optional[str] = Field(None, description="Other relevant context if present.")
 
 conversation_agent = Agent(
-    "openai:gpt-4o",
+    "openai:gpt-4o-mini",
     output_type=ConversationAgentOutput,
     system_prompt=(
         "You are an expert learning advisor AI. Given a user's chat transcript, extract the following as structured JSON:\n"

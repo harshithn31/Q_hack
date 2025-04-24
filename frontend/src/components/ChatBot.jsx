@@ -2,6 +2,24 @@ import { useState, useRef, useEffect } from "react";
 import { Box, VStack, Input, IconButton, Text, Spinner, HStack, Flex, useColorModeValue } from "@chakra-ui/react";
 import { FaUser, FaRobot, FaCogs, FaPaperPlane } from "react-icons/fa";
 
+function formatBundle(data) {
+  if (!data) return "No data available.";
+
+  let output = `🎯 Target Role: ${data.target_role}\n`;
+  output += `📚 Learning Goals: ${data.goal_skills?.join(", ") || "None"}\n`;
+  output += `💰 Budget: €${data.budget_eur}\n\n📦 Recommended Modules:\n\n`;
+
+  data.recommended_modules?.forEach((mod, i) => {
+    output += `${i + 1}. 📘 Course: ${mod.course_title}\n`;
+    output += `   🔹 Module: ${mod.module_title}\n`;
+    output += `   📄 Description: ${mod.module_description}\n`;
+    output += `   ✅ Selected Subtopics: ${mod.selected_subtopics.join(", ")}\n`;
+    output += `   💡 Why Selected: ${mod.why_selected}\n\n`;
+  });
+
+  return output;
+}
+
 export default function ChatBot({ resumeId, profileName, onPipelineComplete }) {
   const [messages, setMessages] = useState(
     resumeId
@@ -17,8 +35,8 @@ export default function ChatBot({ resumeId, profileName, onPipelineComplete }) {
 		setMessages(newMessages);
     setLoading(true);
     // Simulate API call, replace with real pipeline call
-		console.log(input);
-		console.log(resumeId);
+		//console.log(input);
+		//console.log(resumeId);
 		try {
     const res = await fetch("/api/recommend-bundle", {
       method: "POST",
@@ -28,13 +46,15 @@ export default function ChatBot({ resumeId, profileName, onPipelineComplete }) {
         chat_transcript: input, // or just [last message] if you're not using chat history
       }),
     });
-
+    //console.log(res);
     if (!res.ok) throw new Error("Failed to get AI response");
 
 			const data = await res.json();
+      console.log(data)
+      console.log(data.target_role)
     const botReply = {
       role: "bot",
-      content: data.reply || "Here’s your personalized learning path.",
+      content: formatBundle(data) || "Here’s your personalized learning path.",
     };
     setMessages((msgs) => [...msgs, botReply]);
 

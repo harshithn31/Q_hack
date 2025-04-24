@@ -19,7 +19,7 @@ with open(COURSE_JSON_PATH, "r", encoding="utf-8") as f:
 
 class CourseRetriever:
     def __init__(self, courses: List[Dict] = None):
-        self.courses = courses or MOCK_COURSES
+        self.courses = courses or ALL_COURSES
         self.embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
         self._build_index()
 

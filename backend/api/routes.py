@@ -32,6 +32,7 @@ async def upload_resume(file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail="Failed to process resume.")
 
         resume_id = str(uuid.uuid4())
+        print(result)
         RESUME_STORE[resume_id] = result  # Store full result instead of raw text
 
         print(f"[UPLOAD] Successfully processed and stored resume_id={resume_id}")
@@ -75,19 +76,36 @@ async def recommend_bundle(request: PipelineRequest):
     Runs the full pipeline and returns a module-level personalized learning bundle.
     Response includes summary, skills, skill gap, and recommended_modules (with course/module/subtopics/rationale).
     """
-    resume_text = RESUME_STORE.get(request.resume_id)
+    resume_data = RESUME_STORE.get(request.resume_id)
+
+    resume_text = f"""
+    Name: {resume_data.get("name", "Unknown")}
+    Summary: {resume_data.get("summary", "Not provided")}
+    Skills: {', '.join(resume_data.get("skills", []))}
+    """
+
+
     if not resume_text:
         raise HTTPException(status_code=400, detail="Invalid or expired resume_id.")
-    #state = await run_full_pipeline(resume_text, request.chat_transcript)
+    state = await run_full_pipeline(resume_text.strip(), request.chat_transcript)
+    if not state.target_role:
+        raise HTTPException(status_code=400, detail="Insufficient context. Please tell me more about your learning goals.")
+
+    if not state.goal_skills:
+        raise HTTPException(status_code=400, detail="Insufficient context. Please tell me more about your learning goals.")
+
+    if not state.budget_eur:
+        raise HTTPException(status_code=400, detail="Insufficient context. Please tell me more about your learning goals.")
+
     return {
-#        "summary": state.summary,
+#       "summary": state.summary,
 #        "skills": state.skills,
-#        "target_role": state.target_role,
-#        "goal_skills": state.goal_skills,
+        "target_role": state.target_role,
+        "goal_skills": state.goal_skills,
+        "budget_eur": state.budget_eur,
 #        "skills_gap": state.skills_gap,
-#        "recommended_modules": state.recommended_modules or [],
+        "recommended_modules": state.recommended_modules or [],
 #        "final_bundle": state.final_bundle or [],
-"reply": "All good!"
     }
 
 @router.post("/quiz")
