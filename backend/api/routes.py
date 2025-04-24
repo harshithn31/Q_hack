@@ -78,15 +78,16 @@ async def recommend_bundle(request: PipelineRequest):
     resume_text = RESUME_STORE.get(request.resume_id)
     if not resume_text:
         raise HTTPException(status_code=400, detail="Invalid or expired resume_id.")
-    state = await run_full_pipeline(resume_text, request.chat_transcript)
+    #state = await run_full_pipeline(resume_text, request.chat_transcript)
     return {
-        "summary": state.summary,
-        "skills": state.skills,
-        "target_role": state.target_role,
-        "goal_skills": state.goal_skills,
-        "skills_gap": state.skills_gap,
-        "recommended_modules": state.recommended_modules or [],
-        "final_bundle": state.final_bundle or [],
+#        "summary": state.summary,
+#        "skills": state.skills,
+#        "target_role": state.target_role,
+#        "goal_skills": state.goal_skills,
+#        "skills_gap": state.skills_gap,
+#        "recommended_modules": state.recommended_modules or [],
+#        "final_bundle": state.final_bundle or [],
+"reply": "All good!"
     }
 
 @router.post("/quiz")
