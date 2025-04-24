@@ -7,3 +7,4 @@ dotenv
 python-dotenv
 pydantic-ai
 langgraph
+langchain-community

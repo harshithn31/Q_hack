@@ -1,21 +1,20 @@
 """
-Resume file parser for PDF and TXT resumes.
-- Securely extracts text from PDF or TXT files for pipeline ingestion.
-- Input: file-like object (e.g., FastAPI UploadFile.file or BytesIO)
-- Output: extracted plain text (str)
-- Raises ValueError on unsupported file types or extraction errors.
-
-Security: Only accepts .pdf and .txt. Sanitizes output.
+Resume file parser for PDF and TXT resumes using PyMuPDF (fitz).
+- Securely extracts text and images from PDF or TXT files for pipeline ingestion.
+- Input: file-like object (e.g., UploadFile.file or BytesIO)
+- Output: extracted plain text (str) and optional image paths (list)
 """
+
 import io
+import os
+import fitz  # PyMuPDF
 from typing import BinaryIO
 
-import pdfplumber
 
 
 def extract_resume_text(file: BinaryIO, filename: str) -> str:
     """
-    Extracts text from a PDF or TXT resume file.
+    Extracts text from a PDF or TXT resume file using fitz.
     Args:
         file: File-like object (opened in binary mode)
         filename: Name of the uploaded file (for type detection)
@@ -26,12 +25,8 @@ def extract_resume_text(file: BinaryIO, filename: str) -> str:
     """
     if filename.lower().endswith(".pdf"):
         try:
-            import io
-            # Reason: Wrap bytes in BytesIO for pdfplumber compatibility
-            with pdfplumber.open(io.BytesIO(file)) as pdf:
-                text = "\n".join(
-                    page.extract_text() or "" for page in pdf.pages
-                )
+            doc = fitz.open(stream=file, filetype="pdf")
+            text = "\n".join([page.get_text() for page in doc])
             if not text.strip():
                 raise ValueError("No extractable text found in PDF.")
             return text.strip()
@@ -39,7 +34,7 @@ def extract_resume_text(file: BinaryIO, filename: str) -> str:
             raise ValueError(f"PDF extraction failed: {e}")
     elif filename.lower().endswith(".txt"):
         try:
-            text = file.read().decode("utf-8", errors="ignore")
+            text = file.decode("utf-8", errors="ignore")
             if not text.strip():
                 raise ValueError("No extractable text found in TXT.")
             return text.strip()
@@ -47,3 +42,57 @@ def extract_resume_text(file: BinaryIO, filename: str) -> str:
             raise ValueError(f"TXT extraction failed: {e}")
     else:
         raise ValueError("Unsupported file type. Only PDF and TXT are accepted.")
+
+
+def extract_images_from_pdf(file: BinaryIO, output_dir: str = "images") -> list[str]:
+    doc = fitz.open(stream=file, filetype="pdf")
+    image_paths = []
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    for page_index in range(len(doc)):
+        for img_index, img in enumerate(doc[page_index].get_images(full=True)):
+            xref = img[0]
+            base_image = doc.extract_image(xref)
+            image_bytes = base_image["image"]
+            image_ext = base_image["ext"]
+            image_filename = f"{output_dir}/page{page_index+1}_img{img_index+1}.{image_ext}"
+
+            with open(image_filename, "wb") as f:
+                f.write(image_bytes)
+            image_paths.append(image_filename)
+
+    return image_paths
+
+
+# ------------ CLI Test Runner ------------
+from PIL import Image
+
+if __name__ == "__main__":
+    test_files = [
+        ("SampleResumeHack.pdf", "application/pdf"),
+        ("SampleResumeHack.txt", "text/plain"),
+    ]
+
+    for file_path, file_type in test_files:
+        try:
+            with open(file_path, "rb") as f:
+                file_bytes = f.read()
+                content = extract_resume_text(file_bytes, file_path)
+                print(f"\n✅ Extracted text from {file_path}:\n")
+                print(content[:1000])  # Limit preview to 1000 chars
+
+                if file_path.lower().endswith(".pdf"):
+                    print(f"\n🖼️ Extracting images from {file_path}...\n")
+                    image_paths = extract_images_from_pdf(file_bytes)
+                    print("Images extracted:", image_paths)
+
+                    for image_path in image_paths:
+                        try:
+                            img = Image.open(image_path)
+                            img.show()
+                        except Exception as img_error:
+                            print(f"⚠️ Could not display image {image_path}: {img_error}")
+
+        except Exception as e:
+            print(f"\n❌ Error processing {file_path}: {e}")

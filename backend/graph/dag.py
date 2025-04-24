@@ -6,23 +6,27 @@ from pydantic import BaseModel
 from typing import Any, List
 from llm_agents.resume_agent import resume_agent, ResumeAgentOutput
 from llm_agents.conversation_agent import conversation_agent, ConversationAgentOutput
-from llm_agents.course_retrieval_agent import course_retrieval_agent, CourseRetrievalAgentOutput, Course
+from llm_agents.course_retrieval_agent import course_retrieval_agent, CourseRetrievalAgentOutput
 from llm_agents.pricing_agent import pricing_agent, PricingAgentOutput
 from llm_agents.quiz_agent import quiz_agent, QuizAgentOutput
 
 class PipelineState(BaseModel):
     resume_text: str = ""
     chat_transcript: str = ""
-    skills: Any = None
-    summary: Any = None
+    
+    # Only fields used by conversation_agent
     target_role: Any = None
     goal_skills: Any = None
     budget_eur: Any = None
+
+    # Commented out since not used in this step
+    skills: Any = None
+    # summary: Any = None
     skills_gap: Any = None
-    recommended_courses: Any = None
-    final_bundle: Any = None
-    quiz: Any = None
-    quiz_score: Any = None
+    recommended_modules: Any = None
+    # final_bundle: Any = None
+    # quiz: Any = None
+    # quiz_score: Any = None
 
 async def run_resume_agent(state: PipelineState) -> dict:
     result = await resume_agent.run(state.resume_text)
@@ -52,31 +56,31 @@ async def run_course_retrieval_agent(state: PipelineState) -> dict:
     return {"recommended_modules": result.output.recommended_modules}
 
 async def run_pricing_agent(state: PipelineState) -> dict:
-    result = await pricing_agent.run(recommended_courses=state.recommended_courses, budget_eur=state.budget_eur)
+    result = await pricing_agent.run(recommended_modules=state.recommended_modules, budget_eur=state.budget_eur)
     return {"final_bundle": result.output.final_bundle}
 
 async def run_quiz_agent(state: PipelineState) -> dict:
     # Use first missing skill and first course as quiz context
     skill = (state.skills_gap or ["skill"])[0]
-    module = (state.recommended_courses or [{}])[0].get("title", "Module")
+    module = state.recommended_modules[0].module_title if state.recommended_modules else "Module"
     result = await quiz_agent.run(current_skill=skill, module_title=module)
     return {"quiz": result.output.quiz}
 
 # Orchestration function (async, linear for MVP)
 async def run_full_pipeline(resume_text: str, chat_transcript: str) -> PipelineState:
     state = PipelineState(resume_text=resume_text, chat_transcript=chat_transcript)
-    state_dict = await run_resume_agent(state)
-    state = state.copy(update=state_dict)
+#    state_dict = await run_resume_agent(state)
+#    state = state.copy(update=state_dict)
     state_dict = await run_conversation_agent(state)
     state = state.copy(update=state_dict)
     state_dict = await compute_skills_gap(state)
     state = state.copy(update=state_dict)
     state_dict = await run_course_retrieval_agent(state)
     state = state.copy(update=state_dict)
-    state_dict = await run_pricing_agent(state)
-    state = state.copy(update=state_dict)
-    state_dict = await run_quiz_agent(state)
-    state = state.copy(update=state_dict)
+#    state_dict = await run_pricing_agent(state)
+#    state = state.copy(update=state_dict)
+#    state_dict = await run_quiz_agent(state)
+#    state = state.copy(update=state_dict)
     return state
 
 # Usage example (async):

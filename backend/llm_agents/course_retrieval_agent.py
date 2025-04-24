@@ -35,7 +35,7 @@ class CourseRetrievalAgentOutput(BaseModel):
 # ]}
 
 course_retrieval_agent = Agent(
-    "openai:gpt-4o",
+    "openai:gpt-4o-mini",
     output_type=CourseRetrievalAgentOutput,
     system_prompt=(
         "You are an expert learning path designer for a personalized education platform. "

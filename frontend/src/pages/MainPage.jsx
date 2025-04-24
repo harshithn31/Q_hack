@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Flex, Stack } from "@chakra-ui/react";
+import { Box, Flex, Stack, Button, SimpleGrid } from "@chakra-ui/react";
 import ProfileCard from "../components/ProfileCard";
 import ResumeUpload from "../components/ResumeUpload";
 import ChatBot from "../components/ChatBot";
@@ -15,16 +15,45 @@ export default function MainPage() {
   const [xp, setXp] = useState(0);
   const [badges, setBadges] = useState([]);
   const [bundle, setBundle] = useState([]); // Will be set from backend API
-
   const [budget, setBudget] = useState(200);
+  const [resumeId, setResumeId] = useState(null);
+	const [profileData, setProfileData] = useState({
+		name: "Jane Doe",
+		avatarUrl: "https://bit.ly/broken-link",
+		summary: "No summay is avaiable",
+		skills: [],
+	});
 
-  const handleUpload = (file) => {
-    // For prototype, skip file upload and go to chat
-    setStage("chat");
+  const handleUpload = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/upload-resume", {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) throw new Error("Failed to upload resume");
+      const data = await res.json();
+			//console.log(data);
+      setResumeId(data.resume_id || null);
+			setProfileData({
+				name: data.name,
+				avatarUrl: data.avatarUrl,
+				summary: data.summary,
+				skills: data.skills
+			});
+      setStage("chat");
+    } catch (err) {
+      alert("Could not upload resume: " + err.message);
+    }
   };
   const handlePipelineComplete = async ({ quizSkill, quizModule }) => {
     try {
-      const res = await fetch("/api/recommend-bundle", { method: "POST" }); // TODO: Add payload as needed
+      const res = await fetch("/api/recommend-bundle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ resume_id: resumeId, chat_transcript: "" })
+      });
       if (!res.ok) throw new Error("Failed to fetch bundle");
       const data = await res.json();
       setBundle(data.recommended_modules || []);
@@ -48,42 +77,43 @@ export default function MainPage() {
   return (
     <Stack
       direction={{ base: "column", lg: "row" }}
-      minH="100vh"
+      maxH="100vh"
       bg={{ base: "gray.50", md: "gray.100" }}
       _dark={{ bg: { base: "gray.900", md: "gray.800" } }}
       align="stretch"
-      justify="center"
+      justify={{ base: "center", lg: "flex-start" }}
       spacing={{ base: 2, md: 6, lg: 12 }}
       px={{ base: 1, sm: 2, md: 6 }}
       py={{ base: 4, md: 8 }}
-      w="100%"
+      w="full"
       maxW="100vw"
     >
       <Box
         w="100%"
         maxW={{ base: "100%", sm: "480px", lg: "340px" }}
-        mb={{ base: 4, lg: 0 }}
-        alignSelf="center"
+        mb={{ base: 0, lg: 0 }}
         px={{ base: 0, sm: 2 }}
       >
-        <ProfileCard name="Jane Doe" avatarUrl="https://bit.ly/broken-link" />
-        <Box mt={6}><XPBadge xp={xp} badges={badges} /></Box>
+			{profileData && <ProfileCard data={profileData} />}
+      {/* <Box mt={6}><XPBadge xp={xp} badges={badges} /></Box> */}
       </Box>
       <Box
         w="100%"
-        maxW={{ base: "100%", sm: "480px", md: "600px" }}
+        flex="1"
+        maxW="100%"
         mx="auto"
         px={{ base: 0, sm: 2 }}
       >
         {stage === "upload" && <ResumeUpload onUpload={handleUpload} />}
-        {stage === "chat" && <ChatBot onPipelineComplete={handlePipelineComplete} />}
+        {stage === "chat" && <ChatBot resumeId={resumeId} profileName={profileData.name} onPipelineComplete={handlePipelineComplete} />}
         {stage === "bundle" && (
           <Box>
             <BudgetSlider budget={budget} setBudget={setBudget} />
-            {/* TODO: Replace with real bundle cards from API */}
-            {bundle.map((b, i) => (
-              <BundleCard key={i} {...b} />
-            ))}
+            <SimpleGrid columns={{ base: 1, sm: 1, md: 2, lg: 3 }} spacing={{ base: 4, md: 6 }} mt={4}>
+              {bundle.map((b, i) => (
+                <BundleCard key={i} {...b} />
+              ))}
+            </SimpleGrid>
             <Box textAlign="center" mt={4}>
               <Button
                 colorScheme="brand"

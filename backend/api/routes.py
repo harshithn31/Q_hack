@@ -8,6 +8,7 @@ from graph.dag import run_full_pipeline
 from llm_agents.quiz_agent import get_quiz, validate_quiz_answers, QuizQuestion
 from embeddings.utils import extract_resume_text
 from typing import List, Dict
+from resume_parser_main import process_resume
 
 router = APIRouter()
 
@@ -15,24 +16,49 @@ router = APIRouter()
 USER_XP = {}
 USER_BADGES = {}
 
+import uuid
+
+RESUME_STORE = {}
+
 @router.post("/upload-resume")
 async def upload_resume(file: UploadFile = File(...)):
-    """
-    Accepts a PDF or TXT resume, extracts text securely, and returns it.
-    """
+    print(f"[UPLOAD] Received upload request: filename={file.filename}, content_type={file.content_type}")
     try:
-        text = extract_resume_text(await file.read(), file.filename)
-        if not text.strip():
-            raise HTTPException(status_code=400, detail="No extractable text found in resume.")
-        return {"text": text}
+        file_bytes = await file.read()
+
+        # Run the AI pipeline
+        result = await process_resume(file_bytes, file.filename)
+        if result is None:
+            raise HTTPException(status_code=400, detail="Failed to process resume.")
+
+        resume_id = str(uuid.uuid4())
+        print(result)
+        RESUME_STORE[resume_id] = result  # Store full result instead of raw text
+
+        print(f"[UPLOAD] Successfully processed and stored resume_id={resume_id}")
+        return {"resume_id": resume_id,  "name": result["name"],
+            "avatarUri": result["avatarUri"],
+            "summary": result["summary"],
+            "skills": result["skills"]}
     except ValueError as e:
+        print(f"[UPLOAD] ValueError: {e}")
         raise HTTPException(status_code=400, detail=str(e))
-    except Exception:
-        raise HTTPException(status_code=500, detail="Resume extraction failed due to a server error.")
+    except Exception as e:
+        print(f"[UPLOAD] Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail="Resume processing failed due to a server error.")
 
 class PipelineRequest(BaseModel):
-    resume_text: str
+    resume_id: str
     chat_transcript: str
+
+@router.get("/get-resume-text/{resume_id}")
+async def get_resume_text(resume_id: str):
+    data = RESUME_STORE.get(resume_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="Resume not found")
+    return data
+
+
 
 class QuizRequest(BaseModel):
     user_id: str
@@ -50,15 +76,36 @@ async def recommend_bundle(request: PipelineRequest):
     Runs the full pipeline and returns a module-level personalized learning bundle.
     Response includes summary, skills, skill gap, and recommended_modules (with course/module/subtopics/rationale).
     """
-    state = await run_full_pipeline(request.resume_text, request.chat_transcript)
+    resume_data = RESUME_STORE.get(request.resume_id)
+
+    resume_text = f"""
+    Name: {resume_data.get("name", "Unknown")}
+    Summary: {resume_data.get("summary", "Not provided")}
+    Skills: {', '.join(resume_data.get("skills", []))}
+    """
+
+
+    if not resume_text:
+        raise HTTPException(status_code=400, detail="Invalid or expired resume_id.")
+    state = await run_full_pipeline(resume_text.strip(), request.chat_transcript)
+    if not state.target_role:
+        raise HTTPException(status_code=400, detail="Insufficient context. Please tell me more about your learning goals.")
+
+    if not state.goal_skills:
+        raise HTTPException(status_code=400, detail="Insufficient context. Please tell me more about your learning goals.")
+
+    if not state.budget_eur:
+        raise HTTPException(status_code=400, detail="Insufficient context. Please tell me more about your learning goals.")
+
     return {
-        "summary": state.summary,
-        "skills": state.skills,
+#       "summary": state.summary,
+#        "skills": state.skills,
         "target_role": state.target_role,
         "goal_skills": state.goal_skills,
-        "skills_gap": state.skills_gap,
+        "budget_eur": state.budget_eur,
+#        "skills_gap": state.skills_gap,
         "recommended_modules": state.recommended_modules or [],
-        "final_bundle": state.final_bundle or [],
+#        "final_bundle": state.final_bundle or [],
     }
 
 @router.post("/quiz")

@@ -5,6 +5,7 @@ export default function ResumeUpload({ onUpload }) {
   const inputRef = useRef();
 
   const handleFileChange = (e) => {
+    console.log("File selected:", e.target);
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
       onUpload(file);
@@ -12,7 +13,7 @@ export default function ResumeUpload({ onUpload }) {
   };
 
   return (
-    <Box p={6} bg="gray.50" borderRadius="lg" boxShadow="md" textAlign="center">
+    <Box p={6} bg="gray.50" borderRadius="lg" boxShadow="md" textAlign="center" display="flex" minHeight="80vh" alignItems="center" justifyContent="center">
       <VStack spacing={4}>
         <Text fontSize="lg">Upload your resume (PDF)</Text>
         <Button onClick={() => inputRef.current.click()} colorScheme="blue">
