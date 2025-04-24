@@ -10,9 +10,8 @@ from embeddings.utils import extract_resume_text
 from typing import List, Dict
 from llm_agents.module_description_agent import get_module_description
 from llm_agents.update_module_description_agent import get_updated_module_description
-from llm_agents.suggestion_agent import get_suggestion_agent_response
-
-from backend.llm_agents.explanation_agent import get_explanation, ExplanationOutput, ExplanationRequest
+from llm_agents.suggestion_agent import get_teaching_suggestions
+# from backend.llm_agents.explanation_agent import get_explanation, ExplanationOutput, ExplanationRequest
 
 router = APIRouter()
 
@@ -142,27 +141,27 @@ async def suggestion(request: ContentSuggestion):
     Generates a personalized learning suggestion based on course title, module title, and optional topics.
     Returns a concise and engaging summary of the module's key concepts.
     """
-    suggestion = await get_suggestion_agent_response(request.course_title, request.module_title, request.module_topics, request.wrong_questions)
+    suggestion = await get_teaching_suggestions(request.course_title, request.module_title, request.module_topics, request.wrong_questions)
     return {"suggestion": suggestion.description}
 
-@router.post(
-    "/explanation",
-    response_model=ExplanationOutput,
-    summary="Explain or reinforce a piece of text based on user diagnostics."
-)
-async def get_explanation_endpoint(req: ExplanationRequest) -> ExplanationOutput:
-    """
-    - If the request has no scale/questions/answers, returns the raw text.
-    - Otherwise, generates an enhanced explanation via LLM, targeting the user's weak points.
-    """
-    dicti = {}
-    return await get_explanation(
-        raw_text=req.raw_text,
-        scale=req.scale,
-        questions=req.questions,
-        answers=req.answers,
-        knowledge=dicti,
-    )
+# @router.post(
+#     "/explanation",
+#     response_model=ExplanationOutput,
+#     summary="Explain or reinforce a piece of text based on user diagnostics."
+# )
+# async def get_explanation_endpoint(req: ExplanationRequest) -> ExplanationOutput:
+#     """
+#     - If the request has no scale/questions/answers, returns the raw text.
+#     - Otherwise, generates an enhanced explanation via LLM, targeting the user's weak points.
+#     """
+#     dicti = {}
+#     return await get_explanation(
+#         raw_text=req.raw_text,
+#         scale=req.scale,
+#         questions=req.questions,
+#         answers=req.answers,
+#         knowledge=dicti,
+#     )
     
 @router.post("/quiz")
 async def get_quiz_endpoint(request: QuizRequest):
