@@ -34,7 +34,7 @@ export default function MainPage() {
       });
       if (!res.ok) throw new Error("Failed to upload resume");
       const data = await res.json();
-			console.log(data);
+			//console.log(data);
       setResumeId(data.resume_id || null);
 			setProfileData({
 				name: data.name,
@@ -105,7 +105,7 @@ export default function MainPage() {
         px={{ base: 0, sm: 2 }}
       >
         {stage === "upload" && <ResumeUpload onUpload={handleUpload} />}
-        {stage === "chat" && <ChatBot resumeId={resumeId} onPipelineComplete={handlePipelineComplete} />}
+        {stage === "chat" && <ChatBot resumeId={resumeId} profileName={profileData.name} onPipelineComplete={handlePipelineComplete} />}
         {stage === "bundle" && (
           <Box>
             <BudgetSlider budget={budget} setBudget={setBudget} />

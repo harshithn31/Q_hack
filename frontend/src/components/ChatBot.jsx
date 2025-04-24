@@ -2,33 +2,69 @@ import { useState, useRef, useEffect } from "react";
 import { Box, VStack, Input, IconButton, Text, Spinner, HStack, Flex, useColorModeValue } from "@chakra-ui/react";
 import { FaUser, FaRobot, FaCogs, FaPaperPlane } from "react-icons/fa";
 
-export default function ChatBot({ resumeId, onPipelineComplete }) {
+export default function ChatBot({ resumeId, profileName, onPipelineComplete }) {
   const [messages, setMessages] = useState(
     resumeId
-      ? []
-      : [{ role: "system", content: "Hi! Upload your resume to get started." }]
+      ? [{ role: "system", content: "Hi "+profileName+"! Now tell me more about your learning goals, your budget, and your target role." }]
+      : [{ role: "system", content: "Hi "+ profileName+"! Now tell me more about your learning goals, your budget, and your target role." }]
   );
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
-    setMessages([...messages, { role: "user", content: input }]);
+    const newMessages = [...messages, { role: "user", content: input }];
+		setMessages(newMessages);
     setLoading(true);
     // Simulate API call, replace with real pipeline call
-    setTimeout(() => {
-      const botReply = {
-        role: "bot",
-        content: "Thanks! Here is your personalized learning bundle.",
-      };
-      setMessages((msgs) => [...msgs, botReply]);
-      setLoading(false);
+		console.log(input);
+		console.log(resumeId);
+		try {
+    const res = await fetch("/api/recommend-bundle", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        resume_id: resumeId,
+        chat_transcript: input, // or just [last message] if you're not using chat history
+      }),
+    });
+
+    if (!res.ok) throw new Error("Failed to get AI response");
+
+			const data = await res.json();
+    const botReply = {
+      role: "bot",
+      content: data.reply || "Here’s your personalized learning path.",
+    };
+    setMessages((msgs) => [...msgs, botReply]);
+
+		// Call pipeline complete if response is done (mock logic, adapt as needed)
+    if (data.complete) {
       onPipelineComplete({
-        bundle: [{ title: "Intro to Python" }],
-        quizSkill: "Python",
-        quizModule: "Intro to Python",
+        quizSkill: data.quizSkill || "Python",
+        quizModule: data.quizModule || "Intro to Python",
+        bundle: data.bundle || [{ title: "Intro to Python" }],
       });
-    }, 1500);
+    }
+  } catch (err) {
+    console.error(err);
+    setMessages((msgs) => [...msgs, { role: "bot", content: "Sorry, I couldn't process that." }]);
+  } finally {
+    setLoading(false);
+  }
+    //setTimeout(() => {
+    //  const botReply = {
+    //    role: "bot",
+    //    content: "Thanks! Here is your personalized learning bundle.",
+    //  };
+    //  setMessages((msgs) => [...msgs, botReply]);
+    //  setLoading(false);
+    //  onPipelineComplete({
+    //    bundle: [{ title: "Intro to Python" }],
+    //    quizSkill: "Python",
+    //    quizModule: "Intro to Python",
+    //  });
+    //}, 1500);
     setInput("");
   };
 
