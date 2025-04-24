@@ -13,16 +13,20 @@ from llm_agents.quiz_agent import quiz_agent, QuizAgentOutput
 class PipelineState(BaseModel):
     resume_text: str = ""
     chat_transcript: str = ""
-    skills: Any = None
-    summary: Any = None
+    
+    # Only fields used by conversation_agent
     target_role: Any = None
     goal_skills: Any = None
     budget_eur: Any = None
+
+    # Commented out since not used in this step
+    skills: Any = None
+    # summary: Any = None
     skills_gap: Any = None
     recommended_modules: Any = None
-    final_bundle: Any = None
-    quiz: Any = None
-    quiz_score: Any = None
+    # final_bundle: Any = None
+    # quiz: Any = None
+    # quiz_score: Any = None
 
 async def run_resume_agent(state: PipelineState) -> dict:
     result = await resume_agent.run(state.resume_text)
@@ -65,18 +69,18 @@ async def run_quiz_agent(state: PipelineState) -> dict:
 # Orchestration function (async, linear for MVP)
 async def run_full_pipeline(resume_text: str, chat_transcript: str) -> PipelineState:
     state = PipelineState(resume_text=resume_text, chat_transcript=chat_transcript)
-    state_dict = await run_resume_agent(state)
-    state = state.copy(update=state_dict)
+#    state_dict = await run_resume_agent(state)
+#    state = state.copy(update=state_dict)
     state_dict = await run_conversation_agent(state)
     state = state.copy(update=state_dict)
     state_dict = await compute_skills_gap(state)
     state = state.copy(update=state_dict)
     state_dict = await run_course_retrieval_agent(state)
     state = state.copy(update=state_dict)
-    state_dict = await run_pricing_agent(state)
-    state = state.copy(update=state_dict)
-    state_dict = await run_quiz_agent(state)
-    state = state.copy(update=state_dict)
+#    state_dict = await run_pricing_agent(state)
+#    state = state.copy(update=state_dict)
+#    state_dict = await run_quiz_agent(state)
+#    state = state.copy(update=state_dict)
     return state
 
 # Usage example (async):
