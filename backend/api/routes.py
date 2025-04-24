@@ -24,41 +24,20 @@ import uuid
 
 RESUME_STORE = {}
 
-@router.post("/upload-resume")
-async def upload_resume(file: UploadFile = File(...)):
-    print(f"[UPLOAD] Received upload request: filename={file.filename}, content_type={file.content_type}")
-    """
-    Accepts a PDF or TXT resume, extracts text securely, and returns a resume_id for later use.
-    """
-    try:
-        text = extract_resume_text(await file.read(), file.filename)
-        if not text.strip():
-            print(f"[UPLOAD] Extraction failed: No extractable text found in {file.filename}")
-            raise HTTPException(status_code=400, detail="No extractable text found in resume.")
-        resume_id = str(uuid.uuid4())
-        RESUME_STORE[resume_id] = text
-        print(f"[UPLOAD] Successfully stored resume_id={resume_id} for {file.filename}")
-        return {"resume_id": resume_id}
-    except ValueError as e:
-        print(f"[UPLOAD] ValueError: {e}")
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        print(f"[UPLOAD] Unexpected error: {e}")
-        raise HTTPException(status_code=500, detail="Resume extraction failed due to a server error.")
+class QuizRequest(BaseModel):
+    user_id: str
+    current_skill: str
+    module_title: str
+
+class QuizSubmitRequest(BaseModel):
+    user_id: str
+    quiz: List[Dict]
+    answers: List[str]
 
 class PipelineRequest(BaseModel):
     resume_id: str
     chat_transcript: str
-
-@router.get("/get-resume-text/{resume_id}")
-async def get_resume_text(resume_id: str):
-    text = RESUME_STORE.get(resume_id)
-    if not text:
-        raise HTTPException(status_code=404, detail="Resume not found")
-    return {"text": text}
-
-
-
+    
 class QuizRequest(BaseModel):
     user_id: str
     course_title: str
@@ -86,9 +65,35 @@ class ContentSuggestion(BaseModel):
     module_title: str
     module_topics: List[str] = []
     wrong_questions: List[str] = []  # Optional list of wrong questions to guide content suggestion
-    
 
+@router.post("/upload-resume")
+async def upload_resume(file: UploadFile = File(...)):
+    print(f"[UPLOAD] Received upload request: filename={file.filename}, content_type={file.content_type}")
+    """
+    Accepts a PDF or TXT resume, extracts text securely, and returns a resume_id for later use.
+    """
+    try:
+        text = extract_resume_text(await file.read(), file.filename)
+        if not text.strip():
+            print(f"[UPLOAD] Extraction failed: No extractable text found in {file.filename}")
+            raise HTTPException(status_code=400, detail="No extractable text found in resume.")
+        resume_id = str(uuid.uuid4())
+        RESUME_STORE[resume_id] = text
+        print(f"[UPLOAD] Successfully stored resume_id={resume_id} for {file.filename}")
+        return {"resume_id": resume_id}
+    except ValueError as e:
+        print(f"[UPLOAD] ValueError: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        print(f"[UPLOAD] Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail="Resume extraction failed due to a server error.")
 
+@router.get("/get-resume-text/{resume_id}")
+async def get_resume_text(resume_id: str):
+    text = RESUME_STORE.get(resume_id)
+    if not text:
+        raise HTTPException(status_code=404, detail="Resume not found")
+    return {"text": text}
 
 @router.post("/recommend-bundle")
 async def recommend_bundle(request: PipelineRequest):
@@ -158,19 +163,7 @@ async def get_explanation_endpoint(req: ExplanationRequest) -> ExplanationOutput
         answers=req.answers,
         knowledge=dicti,
     )
-
-
-class QuizRequest(BaseModel):
-    user_id: str
-    current_skill: str
-    module_title: str
-
-class QuizSubmitRequest(BaseModel):
-    user_id: str
-    quiz: List[Dict]
-    answers: List[str]
-
-
+    
 @router.post("/quiz")
 async def get_quiz_endpoint(request: QuizRequest):
     quiz_output = await get_quiz(request.course_title, request.module_title, request.module_topics)
